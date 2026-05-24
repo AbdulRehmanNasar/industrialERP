@@ -3,6 +3,7 @@ import { Plus, Trash2, Save, Printer, Mail, FileDown, X, Eye, Search, ChevronDow
 import { Btn, Input, Select, StatusBadge, formatCurrency } from '../components/ui';
 import { mockCustomers, mockItems } from '../data/mockData';
 import type { InvoiceItem, InvoiceStatus, PaymentTerms } from '../types';
+import toast from 'react-hot-toast';
 
 const emptyItem = (): InvoiceItem => ({
   srNo: 1, itemCode: '', description: '', unit: 'MT', quantity: 0, rate: 0,
@@ -19,6 +20,37 @@ export default function SalesInvoice() {
   const [paymentMethod, setPaymentMethod] = useState('Bank Transfer');
   const [showCustomerSearch, setShowCustomerSearch] = useState(false);
   const [customerSearch, setCustomerSearch] = useState('');
+  const [savedInvoice, setSavedInvoice] = useState<any>(null);
+  const [showPreview, setShowPreview] = useState(false);
+
+
+  const handleSave = () => {
+  const invoiceData = {
+    invoiceNo: 'INV-2024-0894',
+    customer,
+    items,
+    subtotal,
+    discountTotal,
+    taxTotal,
+    grandTotal,
+    paidAmount,
+    remaining,
+    status,
+    terms,
+    savedAt: new Date().toLocaleString(),
+  };
+
+  localStorage.setItem(
+    'latestInvoice',
+    JSON.stringify(invoiceData)
+  );
+
+  setSavedInvoice(invoiceData);
+  setShowPreview(true);
+
+  toast.success("Invoice saved successfully!");
+
+};
 
   const customer = mockCustomers.find(c => c.id === customerId) ?? mockCustomers[0];
 
@@ -60,13 +92,25 @@ export default function SalesInvoice() {
   return (
     <div className="flex-1 overflow-hidden flex flex-col bg-gray-50">
       <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-2 flex-shrink-0">
-        <Btn variant="primary" size="sm"><Save size={12} />Save</Btn>
-        <Btn variant="secondary" size="sm"><Printer size={12} />Save & Print</Btn>
+<Btn
+  variant="primary"
+  size="sm"
+  onClick={handleSave}
+>
+  <Save size={12} />
+  Save
+</Btn>        <Btn variant="secondary" size="sm"><Printer size={12} />Save & Print</Btn>
         <Btn variant="secondary" size="sm"><FileDown size={12} />PDF</Btn>
         <Btn variant="secondary" size="sm"><Mail size={12} />Email</Btn>
         <div className="w-px h-4 bg-gray-200 mx-1" />
-        <Btn variant="ghost" size="sm"><Eye size={12} />Preview</Btn>
-        <div className="flex-1" />
+<Btn
+  variant="ghost"
+  size="sm"
+  onClick={() => setShowPreview(true)}
+>
+  <Eye size={12} />
+  Preview
+</Btn>        <div className="flex-1" />
         <Btn variant="ghost" size="sm"><X size={12} />Clear</Btn>
         <Btn variant="danger" size="sm">Delete</Btn>
       </div>
@@ -330,8 +374,15 @@ export default function SalesInvoice() {
               <div className="w-24 h-24 border-2 border-gray-200 rounded flex items-center justify-center bg-gray-50 mb-2">
                 <div className="grid grid-cols-5 gap-0.5">
                   {Array.from({ length: 25 }).map((_, i) => (
-                    <div key={i} className={`w-2 h-2 ${Math.random() > 0.5 ? 'bg-gray-800' : 'bg-white'}`} />
-                  ))}
+  <div
+    key={i}
+    className={`w-2 h-2 ${
+      [0,1,2,5,6,10,12,13,17,18,20,21,22,24].includes(i)
+        ? 'bg-black'
+        : 'bg-white'
+    }`}
+  />
+))}
                 </div>
               </div>
               <div className="text-[9px] text-gray-400 text-center">INV-2024-0894</div>
@@ -340,6 +391,145 @@ export default function SalesInvoice() {
           </div>
         </div>
       </div>
+      {showPreview && (
+  <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl max-h-[90vh] overflow-auto">
+
+      <div className="flex justify-between items-center border-b px-6 py-4">
+        <h2 className="text-lg font-bold">
+          Invoice Preview
+        </h2>
+
+        <button
+          onClick={() => setShowPreview(false)}
+          className="text-gray-500 hover:text-black"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div className="p-6">
+
+        <div className="flex justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold">
+              SALES TAX INVOICE
+            </h1>
+
+            <div className="text-sm text-gray-600">
+              Invoice No: INV-2024-0894
+            </div>
+
+            <div className="text-sm text-gray-600">
+              Status: {status}
+            </div>
+          </div>
+
+          <div className="text-right">
+            <div className="border p-3 inline-block">
+              <div className="grid grid-cols-5 gap-0.5">
+                {Array.from({ length: 25 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`w-2 h-2 ${
+                      [0,1,2,5,6,10,12,13,17,18,20,21,22,24].includes(i)
+                        ? 'bg-black'
+                        : 'bg-white'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="text-xs mt-2">
+              Scan to Verify
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">
+            Customer Information
+          </h3>
+
+          <p>{customer.name}</p>
+          <p>{customer.address}</p>
+          <p>{customer.phone}</p>
+          <p>NTN: {customer.ntn}</p>
+        </div>
+
+        <table className="w-full border text-sm mb-6">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border p-2">#</th>
+              <th className="border p-2">Item</th>
+              <th className="border p-2">Qty</th>
+              <th className="border p-2">Rate</th>
+              <th className="border p-2">Tax</th>
+              <th className="border p-2">Total</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {items.map(item => (
+              <tr key={item.srNo}>
+                <td className="border p-2">
+                  {item.srNo}
+                </td>
+
+                <td className="border p-2">
+                  {item.description}
+                </td>
+
+                <td className="border p-2">
+                  {item.quantity}
+                </td>
+
+                <td className="border p-2">
+                  {formatCurrency(item.rate)}
+                </td>
+
+                <td className="border p-2">
+                  {formatCurrency(item.taxAmount)}
+                </td>
+
+                <td className="border p-2">
+                  {formatCurrency(item.valueInclTax)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="flex justify-end">
+          <div className="w-80 space-y-2">
+            <div className="flex justify-between">
+              <span>Subtotal</span>
+              <span>
+                {formatCurrency(subtotal)}
+              </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Tax</span>
+              <span>
+                {formatCurrency(taxTotal)}
+              </span>
+            </div>
+
+            <div className="flex justify-between font-bold text-lg border-t pt-2">
+              <span>Grand Total</span>
+              <span>
+                {formatCurrency(grandTotal)}
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }

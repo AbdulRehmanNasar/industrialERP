@@ -15,6 +15,7 @@ import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import GenericPage from './pages/GenericPage';
 import type { NavPage } from './types';
+import { Toaster } from 'react-hot-toast';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<NavPage>('dashboard');
@@ -51,6 +52,7 @@ export default function App() {
           {renderPage()}
         </main>
       </div>
+      <Toaster position="top-right" />
     </div>
   );
 }
