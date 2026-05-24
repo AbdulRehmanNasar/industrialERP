@@ -68,6 +68,8 @@ export default function SalesInvoice() {
     });
   };
 
+  console.log("FORCE VERCEL TEST 123");
+
   const addRow = () => setItems(prev => [...prev, { ...emptyItem(), srNo: prev.length + 1 }]);
   const removeRow = (idx: number) => setItems(prev => prev.filter((_, i) => i !== idx).map((it, i) => ({ ...it, srNo: i + 1 })));
 
