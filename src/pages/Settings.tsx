@@ -61,6 +61,7 @@ export default function Settings() {
                 <div className="col-span-2"><Input label="Company Name" defaultValue="PumiceERP Industrial Materials Ltd." /></div>
                 <Input label="NTN Number" defaultValue="1234567-8" />
                 <Input label="STRN Number" defaultValue="PKR-12345678" />
+                <Input label="POS Number" defaultValue="314391" />
                 <div className="col-span-2"><Input label="Registered Address" defaultValue="Plot 12, Industrial Area, SITE, Karachi, Pakistan" /></div>
                 <Input label="Phone" defaultValue="021-35123456" />
                 <Input label="Email" defaultValue="info@pumiceerp.pk" />

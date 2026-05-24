@@ -22,11 +22,13 @@ export default function SalesInvoice() {
   const [customerSearch, setCustomerSearch] = useState('');
   const [savedInvoice, setSavedInvoice] = useState<any>(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [posId, setPosId] = useState('314391');
 
 
   const handleSave = () => {
   const invoiceData = {
     invoiceNo: 'INV-2024-0894',
+    posId,
     customer,
     items,
     subtotal,
@@ -133,6 +135,12 @@ export default function SalesInvoice() {
               <Input label="Invoice No" defaultValue="INV-2024-0894" readOnly className="bg-gray-50 cursor-default" />
               <Input label="Invoice Date" type="date" defaultValue="2024-01-24" />
               <Input label="Due Date" type="date" defaultValue="2024-02-24" />
+              <Input
+  label="POS ID (FBR)"
+  value={posId}
+  onChange={e => setPosId(e.target.value)}
+  placeholder="Enter POS ID"
+/>
               <Select label="Status" value={status} onChange={e => setStatus(e.target.value as InvoiceStatus)}>
                 <option>Draft</option>
                 <option>Unpaid</option>
@@ -421,6 +429,10 @@ export default function SalesInvoice() {
             <div className="text-sm text-gray-600">
               Invoice No: INV-2024-0894
             </div>
+
+            <div className="text-sm text-gray-600">
+  POS ID: {posId || 'N/A'}
+</div>
 
             <div className="text-sm text-gray-600">
               Status: {status}
